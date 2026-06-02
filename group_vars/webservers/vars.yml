@@ -1,6 +1,24 @@
+---
 redmine_port: 3000
 redmine_db_host: rc1b-6l6eqv7ucphvrdcq.mdb.yandexcloud.net
 redmine_db_port: "6432"
 redmine_db_username: app_user
 redmine_db_database: my-db
 redmine_db_password: "{{ vault_redmine_db_password }}"
+
+# Datadog variables
+datadog_api_key: "{{ vault_datadog_api_key }}"
+datadog_app_key: "{{ vault_datadog_app_key }}"
+datadog_site: "datadoghq.com"  # если регион US
+datadog_config:
+  logs_enabled: true
+  apm_enabled: true
+  process_agent_enabled: true
+datadog_checks:
+  http_check:
+    init_config:
+    instances:
+      - name: "Redmine health check"
+        url: "https://zalukaev-diplom.ru"
+        timeout: 10
+        check_certificate_expiration: true
