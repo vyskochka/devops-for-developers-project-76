@@ -1,0 +1,27 @@
+---
+- name: Деплой Redmine
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: Создать директорию для Redmine
+      file:
+        path: /opt/redmine
+        state: directory
+        mode: '0755'
+
+    - name: Скопировать .env файл
+      template:
+        src: templates/env.j2
+        dest: /opt/redmine/.env
+        mode: '0644'
+
+    - name: Запустить контейнер Redmine
+      docker_container:
+        name: redmine
+        image: redmine:latest
+        state: started
+        restart_policy: always
+        ports:
+          - "{{ redmine_port }}:3000"
+        env_file: /opt/redmine/.env

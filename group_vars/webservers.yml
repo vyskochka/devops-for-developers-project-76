@@ -2,3 +2,5 @@
 pip_install_packages:
   - name: docker
   - name: docker-compose
+
+redmine_port: 3000
