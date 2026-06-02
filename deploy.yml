@@ -1,22 +1,18 @@
 ---
-- name: Деплой Redmine
+- name: Деплой Redmine с PostgreSQL
   hosts: webservers
   become: yes
+  vars_files:
+    - group_vars/webservers/vars.yml
+    - group_vars/webservers/vault.yml
 
   tasks:
-    - name: Создать директорию для Redmine
-      file:
-        path: /opt/redmine
-        state: directory
-        mode: '0755'
+    - name: Удалить старый контейнер (если есть)
+      docker_container:
+        name: redmine
+        state: absent
 
-    - name: Скопировать .env файл
-      template:
-        src: templates/env.j2
-        dest: /opt/redmine/.env
-        mode: '0644'
-
-    - name: Запустить контейнер Redmine
+    - name: Запустить Redmine с PostgreSQL
       docker_container:
         name: redmine
         image: redmine:latest
@@ -24,4 +20,9 @@
         restart_policy: always
         ports:
           - "{{ redmine_port }}:3000"
-        env_file: /opt/redmine/.env
+        env:
+          REDMINE_DB_POSTGRES: "{{ redmine_db_host }}"
+          REDMINE_DB_PORT: "{{ redmine_db_port }}"
+          REDMINE_DB_USERNAME: "{{ redmine_db_username }}"
+          REDMINE_DB_PASSWORD: "{{ redmine_db_password }}"
+          REDMINE_DB_DATABASE: "{{ redmine_db_database }}"

@@ -5,4 +5,4 @@ setup:
 	ansible-playbook -i inventory.ini playbook.yml
 
 deploy:
-	ansible-playbook -i inventory.ini deploy.yml
+	ansible-playbook -i inventory.ini deploy.yml --ask-vault-pass
